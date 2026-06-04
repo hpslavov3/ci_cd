@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "@sap/cds": "^8",
+    "@cap-js/sqlite": "^1",
+    "jest": "^29"
+  },
+  "scripts": {
+    "test": "jest"
+  }
+}
