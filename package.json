@@ -6,5 +6,8 @@
   },
   "scripts": {
     "test": "jest"
+  },
+  "devDependencies": {
+    "@sap/cds-dk": "^9"
   }
 }
