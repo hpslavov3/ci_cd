@@ -1,0 +1,12 @@
+---
+stages:
+  build:
+    buildTool: "mta"
+    buildDescriptor: "mta.yaml"
+    buildToolVersion: "MBTJ17N22"
+  malwareScan:
+    scan: false
+  additionalTests:
+    npmTests:
+      buildDescriptor: "package.json"
+      npmScript: "test"
