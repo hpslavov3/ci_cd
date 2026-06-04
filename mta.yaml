@@ -1,31 +1,86 @@
-_schema-version: 3.3.0
-ID: ci_cd
+_schema-version: "3.1"
+ID: cap-multi-stack
 version: 1.0.0
-description: "A simple CAP project."
-parameters:
-  enable-parallel-deployments: true
-build-parameters:
-  before-all:
-    - builder: custom
-      commands:
-        - npm i
-        - npm ci
-        - npx cds build --production
+description: "Multi-stack CAP project: Java service, Node.js service, UI5 frontend"
+
 modules:
-  - name: ci_cd-srv
-    type: nodejs
-    path: gen/srv
+
+  # ─── CAP Java Module ───────────────────────────────────────────────────────
+  - name: cap-java-srv
+    type: java
+    path: cap-java
     parameters:
-      instances: 1
-      buildpack: nodejs_buildpack
+      buildpack: sap_java_buildpack
+      disk-quota: 512M
+      memory: 512M
     build-parameters:
-      builder: npm-ci
+      build-artifact-name: cap-java-srv
+      builder: custom
+      commands:
+        - mvn clean package -DskipTests=true
+      supported-platforms: []
+    properties:
+      SPRING_PROFILES_ACTIVE: cloud
+      JBP_CONFIG_COMPONENTS: "jres: ['com.sap.xs.java.buildpack.jre.SAPMachineJRE']"
+      JBP_CONFIG_SAP_MACHINE_JRE: "{ version: 17.+ }"
     provides:
-      - name: srv-api # required by consumers of CAP services (e.g. approuter)
+      - name: cap-java-srv-api
         properties:
           srv-url: ${default-url}
     requires:
-      []
+      - name: cap-multi-stack-db
+
+  # ─── CAP Node.js Module ────────────────────────────────────────────────────
+  - name: cap-node-srv
+    type: nodejs
+    path: cap-node
+    parameters:
+      disk-quota: 256M
+      memory: 256M
+    build-parameters:
+      builder: npm
+      ignore:
+        - node_modules/
+        - test/
+    provides:
+      - name: cap-node-srv-api
+        properties:
+          srv-url: ${default-url}
+    requires:
+      - name: cap-multi-stack-db
+
+  # ─── UI5 Frontend Module ───────────────────────────────────────────────────
+  - name: ui5-app
+    type: html5
+    path: ui5-app
+    parameters:
+      disk-quota: 256M
+      memory: 128M
+    build-parameters:
+      builder: custom
+      commands:
+        - npm install
+        - npm run build
+      supported-platforms: []
+    requires:
+      - name: cap-java-srv-api
+        group: destinations
+        properties:
+          name: cap-java-srv
+          url: ~{srv-url}
+          forwardAuthToken: true
+      - name: cap-node-srv-api
+        group: destinations
+        properties:
+          name: cap-node-srv
+          url: ~{srv-url}
+          forwardAuthToken: true
 
 resources:
-  []
+  - name: cap-multi-stack-db
+    type: com.sap.xs.hdi-container
+    parameters:
+      service: hana
+      service-plan: hdi-shared
+    properties:
+      hdi-service-name: ${service-name}

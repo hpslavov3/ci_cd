@@ -1,0 +1,21 @@
+{
+  "[development]": {
+    "requires": {
+      "db": {
+        "kind": "sqlite",
+        "credentials": { "database": ":memory:" }
+      }
+    },
+    "server": {
+      "cors": true
+    }
+  },
+  "[test]": {
+    "requires": {
+      "db": {
+        "kind": "sqlite",
+        "credentials": { "database": ":memory:" }
+      }
+    }
+  }
+}

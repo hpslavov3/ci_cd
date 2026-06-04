@@ -1,0 +1,24 @@
+{
+  "name": "cap-java-srv",
+  "version": "1.0.0",
+  "cds": {
+    "build": {
+      "target": ".",
+      "tasks": [
+        {
+          "for": "java",
+          "src": "srv",
+          "dest": "src/main/resources",
+          "options": {
+            "model": ["db", "srv"]
+          }
+        }
+      ]
+    },
+    "requires": {
+      "db": {
+        "kind": "h2"
+      }
+    }
+  }
+}

@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>3.2.5</version>
+    <relativePath/>
+  </parent>
+
+  <groupId>com.example</groupId>
+  <artifactId>cap-java-srv</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
+  <name>cap-java-srv</name>
+  <description>CAP Java Books Service</description>
+
+  <properties>
+    <java.version>17</java.version>
+    <cds.services.version>2.10.0</cds.services.version>
+    <cds.install-cdsdk.version>^7</cds.install-cdsdk.version>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>com.sap.cds</groupId>
+        <artifactId>cds-services-bom</artifactId>
+        <version>${cds.services.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <dependencies>
+    <!-- CAP starter with OData V4 adapter -->
+    <dependency>
+      <groupId>com.sap.cds</groupId>
+      <artifactId>cds-starter-spring-boot-odata</artifactId>
+    </dependency>
+
+    <!--
+      H2 in-memory database for local development.
+      Spring Boot auto-configures H2 with zero extra properties needed –
+      no schema.sql generation step required, no driver class to specify.
+      CAP Java supports H2 out of the box for local/test use.
+    -->
+    <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+
+    <!-- Spring Boot test slice -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>com.sap.cds</groupId>
+        <artifactId>cds-maven-plugin</artifactId>
+        <version>${cds.services.version}</version>
+        <executions>
+
+          <execution>
+            <id>cds.clean</id>
+            <phase>initialize</phase>
+            <goals><goal>clean</goal></goals>
+          </execution>
+
+          <execution>
+            <id>cds.install-node</id>
+            <phase>initialize</phase>
+            <goals><goal>install-node</goal></goals>
+          </execution>
+
+          <execution>
+            <id>cds.install-cdsdk</id>
+            <phase>initialize</phase>
+            <goals><goal>install-cdsdk</goal></goals>
+          </execution>
+
+          <execution>
+            <id>cds.resolve</id>
+            <phase>initialize</phase>
+            <goals><goal>resolve</goal></goals>
+          </execution>
+
+          <!--
+            Compile CDS model for Java.
+            workingDirectory = project root so db/ and srv/ are found correctly.
+            No schema.sql generation needed – H2 is auto-initialised by CAP+Spring.
+          -->
+          <execution>
+            <id>cds.build</id>
+            <phase>initialize</phase>
+            <goals><goal>cds</goal></goals>
+            <configuration>
+              <workingDirectory>${project.basedir}</workingDirectory>
+              <commands>
+                <command>build --for java</command>
+              </commands>
+            </configuration>
+          </execution>
+
+          <!--
+            Generate cds.gen.* Java accessor interfaces from the compiled CSN.
+          -->
+          <execution>
+            <id>cds.generate</id>
+            <phase>generate-sources</phase>
+            <goals><goal>generate</goal></goals>
+            <configuration>
+              <basePackage>cds.gen</basePackage>
+              <inputDirectory>${project.basedir}/src/main/resources</inputDirectory>
+            </configuration>
+          </execution>
+
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <configuration>
+          <classifier>exec</classifier>
+        </configuration>
+      </plugin>
+
+    </plugins>
+  </build>
+
+  <repositories>
+    <repository>
+      <id>central</id>
+      <url>https://repo.maven.apache.org/maven2</url>
+    </repository>
+  </repositories>
+
+</project>

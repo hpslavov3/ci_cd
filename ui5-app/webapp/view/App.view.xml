@@ -1,0 +1,156 @@
+<mvc:View
+  controllerName="ui5app.controller.App"
+  displayBlock="true"
+  xmlns="sap.m"
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns:core="sap.ui.core"
+  xmlns:l="sap.ui.layout">
+
+  <App id="appNav">
+    <pages>
+      <Page id="mainPage" title="CAP Multi-Stack Demo">
+
+        <customHeader>
+          <Bar>
+            <contentLeft>
+              <Title text="CAP Multi-Stack Demo" level="H3"/>
+            </contentLeft>
+            <contentRight>
+              <Button
+                text="Refresh All"
+                icon="sap-icon://refresh"
+                press=".onRefreshAll"
+                type="Emphasized"/>
+            </contentRight>
+          </Bar>
+        </customHeader>
+
+        <content>
+
+          <MessageStrip
+            id="statusStrip"
+            text="{view>/statusMessage}"
+            type="{view>/statusType}"
+            showIcon="true"
+            visible="{= !!${view>/statusMessage}}"
+            class="sapUiSmallMargin"/>
+
+          <IconTabBar id="mainTabBar" select=".onTabSelect" class="sapUiResponsiveContentPadding">
+            <items>
+
+              <!-- ── Books Tab (CAP Java) ──────────────────────────────── -->
+              <IconTabFilter
+                id="booksTab"
+                text="Books"
+                key="books"
+                icon="sap-icon://learning-assistant"
+                count="{view>/booksCount}">
+                <content>
+
+                  <HBox class="sapUiSmallMarginBottom" alignItems="Center">
+                    <ObjectStatus
+                      title="Total Stock"
+                      text="{view>/totalStock}"
+                      state="Success"
+                      icon="sap-icon://inventory"
+                      class="sapUiSmallMarginEnd"/>
+                    <ObjectStatus
+                      title="Service"
+                      text="CAP Java · port 8080"
+                      state="Information"
+                      icon="sap-icon://developer-settings"/>
+                  </HBox>
+
+                  <List
+                    id="booksList"
+                    noDataText="No books – is the CAP Java service running on port 8080?"
+                    growing="true"
+                    growingThreshold="10"
+                    busyIndicatorDelay="0"
+                    busy="{view>/booksBusy}">
+                    <items>
+                      <ObjectListItem
+                        title="{title}"
+                        number="{price}"
+                        numberUnit="USD"
+                        numberState="Success">
+                        <attributes>
+                          <ObjectAttribute title="Author" text="{author}"/>
+                          <ObjectAttribute title="Stock"  text="{stock} units"/>
+                        </attributes>
+                      </ObjectListItem>
+                    </items>
+                  </List>
+
+                </content>
+              </IconTabFilter>
+
+              <!-- ── Products Tab (CAP Node) ───────────────────────────── -->
+              <IconTabFilter
+                id="productsTab"
+                text="Products"
+                key="products"
+                icon="sap-icon://product"
+                count="{view>/productsCount}">
+                <content>
+
+                  <HBox class="sapUiSmallMarginBottom" alignItems="Center" justifyContent="SpaceBetween">
+                    <HBox alignItems="Center">
+                      <ObjectStatus
+                        title="Low Stock Items"
+                        text="{view>/lowStockCount}"
+                        state="{= ${view>/lowStockCount} > 0 ? 'Warning' : 'Success'}"
+                        icon="sap-icon://alert"
+                        class="sapUiSmallMarginEnd"/>
+                      <ObjectStatus
+                        title="Service"
+                        text="CAP Node.js · port 4004"
+                        state="Information"
+                        icon="sap-icon://developer-settings"/>
+                    </HBox>
+                    <Button
+                      text="Show Low Stock (&lt;10)"
+                      icon="sap-icon://filter"
+                      press=".onFilterLowStock"
+                      type="Ghost"/>
+                  </HBox>
+
+                  <List
+                    id="productsList"
+                    noDataText="No products – is the CAP Node service running on port 4004?"
+                    growing="true"
+                    growingThreshold="10"
+                    busyIndicatorDelay="0"
+                    busy="{view>/productsBusy}">
+                    <items>
+                      <ObjectListItem
+                        title="{name}"
+                        number="{price}"
+                        numberUnit="USD"
+                        numberState="{= ${quantity} &lt; 5 ? 'Error' : ${quantity} &lt; 10 ? 'Warning' : 'Success'}">
+                        <attributes>
+                          <ObjectAttribute title="Category"    text="{category}"/>
+                          <ObjectAttribute title="Quantity"    text="{quantity} units"/>
+                          <ObjectAttribute title="Description" text="{description}"/>
+                        </attributes>
+                        <firstStatus>
+                          <ObjectStatus
+                            text="{= ${quantity} &lt; 5 ? 'Critical' : ${quantity} &lt; 10 ? 'Low' : 'OK'}"
+                            state="{= ${quantity} &lt; 5 ? 'Error' : ${quantity} &lt; 10 ? 'Warning' : 'Success'}"/>
+                        </firstStatus>
+                      </ObjectListItem>
+                    </items>
+                  </List>
+
+                </content>
+              </IconTabFilter>
+
+            </items>
+          </IconTabBar>
+
+        </content>
+      </Page>
+    </pages>
+  </App>
+
+</mvc:View>

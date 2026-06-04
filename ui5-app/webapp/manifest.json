@@ -1,0 +1,86 @@
+{
+  "_version": "1.58.0",
+  "sap.app": {
+    "id": "ui5app",
+    "type": "application",
+    "title": "CAP Multi-Stack Demo",
+    "description": "Displays data from the CAP Java Books service and CAP Node Products service",
+    "applicationVersion": { "version": "1.0.0" },
+    "dataSources": {
+      "JavaBooksService": {
+        "uri": "/java-api/odata/v4/books/",
+        "type": "OData",
+        "settings": { "odataVersion": "4.0" }
+      },
+      "NodeProductsService": {
+        "uri": "/node-api/odata/v4/products/",
+        "type": "OData",
+        "settings": { "odataVersion": "4.0" }
+      }
+    }
+  },
+  "sap.ui": {
+    "technology": "UI5",
+    "icons": { "icon": "sap-icon://learning-assistant" },
+    "deviceTypes": {
+      "desktop": true,
+      "tablet": true,
+      "phone": true
+    }
+  },
+  "sap.ui5": {
+    "rootView": {
+      "viewName": "ui5app.view.App",
+      "type": "XML",
+      "id": "appView"
+    },
+    "dependencies": {
+      "minUI5Version": "1.120.0",
+      "libs": {
+        "sap.m": {},
+        "sap.ui.core": {},
+        "sap.ui.layout": {}
+      }
+    },
+    "models": {
+      "books": {
+        "dataSource": "JavaBooksService",
+        "preload": false,
+        "settings": {
+          "synchronizationMode": "None",
+          "operationMode": "Server",
+          "autoExpandSelect": true
+        }
+      },
+      "products": {
+        "dataSource": "NodeProductsService",
+        "preload": false,
+        "settings": {
+          "synchronizationMode": "None",
+          "operationMode": "Server",
+          "autoExpandSelect": true
+        }
+      },
+      "view": {
+        "type": "sap.ui.model.json.JSONModel",
+        "settings": { "data": { "busy": false, "activeTab": "books" } }
+      }
+    },
+    "routing": {
+      "config": {
+        "routerClass": "sap.m.routing.Router",
+        "viewType": "XML",
+        "viewPath": "ui5app.view",
+        "controlId": "appNav",
+        "controlAggregation": "pages",
+        "async": true
+      },
+      "routes": [
+        { "name": "home", "pattern": "", "target": "home" }
+      ],
+      "targets": {
+        "home": { "viewName": "App" }
+      }
+    }
+  }
+}

@@ -1,0 +1,58 @@
+specVersion: "3.0"
+metadata:
+  name: ui5-app
+type: application
+framework:
+  name: SAPUI5
+  version: "1.120.1"
+  libraries:
+    - name: sap.m
+    - name: sap.ui.core
+    - name: sap.ui.layout
+    - name: sap.ui.table
+    - name: themelib_sap_horizon
+
+server:
+  customMiddleware:
+    # Proxy /java-api → CAP Java service (port 8080)
+    - name: ui5-middleware-simpleproxy
+      mountPath: /java-api
+      afterMiddleware: compression
+      configuration:
+        baseUri: http://localhost:8080
+        removePathPrefix: true
+        strictSSL: false
+
+    # Proxy /node-api → CAP Node service (port 4004)
+    - name: ui5-middleware-simpleproxy
+      mountPath: /node-api
+      afterMiddleware: compression
+      configuration:
+        baseUri: http://localhost:4004
+        removePathPrefix: true
+        strictSSL: false
+
+builder:
+  resources:
+    excludes:
+      - "/test/**"
+      - "/localService/**"
+
+# ── Headless test runner configuration ────────────────────────────────────
+# Run with: npm test  (or: ui5 test)
+# Uses Chromium via puppeteer – no browser window opens.
+test:
+  runnerReportPlugins:
+    - name: "@ui5/test-runner-reporter-console"
+  runner:
+    - name: chromium
+      config:
+        headless: true
+        executablePath: "" # leave empty – puppeteer downloads Chromium automatically
+  pages:
+    - url: test/unit/unitTests.qunit.html
+      name: Unit Tests
+      timeout: 60
+    - url: test/integration/opaTests.qunit.html
+      name: OPA Integration Tests
+      timeout: 120

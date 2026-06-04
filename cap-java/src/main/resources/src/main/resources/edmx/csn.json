@@ -1,0 +1,99 @@
+{
+  "namespace": "com.example.books",
+  "definitions": {
+    "com.example.books.Books": {
+      "kind": "entity",
+      "elements": {
+        "ID": {
+          "key": true,
+          "type": "cds.Integer"
+        },
+        "title": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "author": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "stock": {
+          "type": "cds.Integer"
+        },
+        "price": {
+          "type": "cds.Decimal",
+          "precision": 9,
+          "scale": 2
+        }
+      }
+    },
+    "BooksService": {
+      "@source": "srv/books-service.cds",
+      "kind": "service",
+      "doc": "Simple Books Service exposed via OData V4.\nEndpoint: /odata/v4/books"
+    },
+    "BooksService.Books": {
+      "kind": "entity",
+      "@readonly": true,
+      "projection": {
+        "from": {
+          "ref": [
+            "com.example.books.Books"
+          ]
+        }
+      },
+      "elements": {
+        "ID": {
+          "key": true,
+          "type": "cds.Integer"
+        },
+        "title": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "author": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "stock": {
+          "type": "cds.Integer"
+        },
+        "price": {
+          "type": "cds.Decimal",
+          "precision": 9,
+          "scale": 2
+        }
+      },
+      "@Capabilities.DeleteRestrictions.Deletable": false,
+      "@Capabilities.InsertRestrictions.Insertable": false,
+      "@Capabilities.UpdateRestrictions.Updatable": false
+    },
+    "BooksService.addBook": {
+      "kind": "action",
+      "params": {
+        "title": {
+          "type": "cds.String"
+        },
+        "author": {
+          "type": "cds.String"
+        },
+        "price": {
+          "type": "cds.Decimal"
+        }
+      },
+      "returns": {
+        "type": "BooksService.Books"
+      }
+    },
+    "BooksService.totalStock": {
+      "kind": "function",
+      "returns": {
+        "type": "cds.Integer"
+      }
+    }
+  },
+  "meta": {
+    "creator": "CDS Compiler v4.9.10",
+    "flavor": "inferred"
+  },
+  "$version": "2.0"
+}

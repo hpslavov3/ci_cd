@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8"/>
+  <title>Integration Tests (OPA5) – CAP Multi-Stack UI5 App</title>
+  <script
+    id="sap-ui-bootstrap"
+    src="https://ui5.sap.com/1.120.1/resources/sap-ui-core.js"
+    data-sap-ui-resourceroots='{
+      "ui5app":         "../../",
+      "test.integration": "./"
+    }'
+    data-sap-ui-async="true"
+  ></script>
+
+  <link rel="stylesheet" type="text/css"
+        href="https://ui5.sap.com/1.120.1/resources/sap/ui/thirdparty/qunit-2.css"/>
+  <script src="https://ui5.sap.com/1.120.1/resources/sap/ui/thirdparty/qunit-2.js"></script>
+
+  <script>
+    QUnit.config.autostart = false;
+
+    sap.ui.getCore().attachInit(function () {
+      sap.ui.require([
+        "test/integration/AppJourney"
+      ], function () {
+        QUnit.start();
+      });
+    });
+  </script>
+</head>
+<body>
+  <div id="qunit"></div>
+  <div id="qunit-fixture"></div>
+</body>
+</html>
