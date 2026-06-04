@@ -19,4 +19,9 @@ describe('Hello Service', () => {
         const result = await srv.tx().send('sayHello');
         expect(result).toBe('Hello World from SAP Build Code CI/CD!');
     });
+
+    test('sayHello returns correct message', async () => {
+        const result = await srv.tx().send('missingEvent');
+        expect(result).toBe('token info');
+    });
 });
