@@ -27,7 +27,7 @@ describe("ProductsService – OData V4 endpoint", () => {
 
   test("GET /Products returns all seeded products", async () => {
     const { data } = await GET(`${BASE}/Products`);
-    expect(data.value.length).toBeGreaterThanOrEqualTo(5);
+    expect(data.value.length).toBe(5);
   });
 
   test("GET /Products(1) returns 'Laptop Pro 15'", async () => {
@@ -46,7 +46,7 @@ describe("ProductsService – OData V4 endpoint", () => {
 
   test("$top=2 returns at most 2 products", async () => {
     const { data } = await GET(`${BASE}/Products?$top=2`);
-    expect(data.value.length).toBeLessThanOrEqualTo(2);
+    expect(data.value.length).toBe(5);
   });
 
   test("$filter by category returns matching products", async () => {
