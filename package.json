@@ -14,6 +14,6 @@
   "author": "",
   "type": "commonjs",
   "scripts": {
-    "test": "cd ./ui5-app && npm run test && cd ../cap-node && npm run test"
+    "test": "cd ./ui5-app && npm install && npm run test && cd ../cap-node && npm install && npm run test"
   }
 }
