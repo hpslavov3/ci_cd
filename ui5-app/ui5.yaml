@@ -31,9 +31,3 @@ server:
         baseUri: http://localhost:4004
         removePathPrefix: true
         strictSSL: false
-
-builder:
-  resources:
-    excludes:
-      - "/test/**"
-      - "/localService/**"
