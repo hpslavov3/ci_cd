@@ -1,0 +1,19 @@
+{
+  "name": "ci_cd",
+  "version": "1.0.0",
+  "description": "A monorepo containing three SAP BTP applications deployable via a single `mta.yaml`:",
+  "homepage": "https://github.com/hpslavov3/ci_cd#readme",
+  "bugs": {
+    "url": "https://github.com/hpslavov3/ci_cd/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hpslavov3/ci_cd.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "scripts": {
+    "test": "cd ./ui5-app && npm run test && cd ../cap-node && npm run test"
+  }
+}

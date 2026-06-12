@@ -17,7 +17,7 @@ modules:
       build-artifact-name: cap-java-srv
       builder: custom
       commands:
-        - mvn clean package -DskipTests=true
+        - mvn clean install
       supported-platforms: []
     properties:
       SPRING_PROFILES_ACTIVE: cloud
@@ -41,7 +41,6 @@ modules:
       builder: npm
       ignore:
         - node_modules/
-        - test/
     provides:
       - name: cap-node-srv-api
         properties:

@@ -1,95 +1,11 @@
-# =============================================================================
-# SAP CI/CD Service – Project Piper pipeline configuration
-# Documentation: https://www.project-piper.io
-#
-# This file drives three test suites:
-#   1. CAP Java  → JUnit   (mvn test)         – Build stage
-#   2. CAP Node  → Jest    (npm test)          – Additional Unit Tests stage
-#   3. UI5 App   → QUnit   (npm test)          – Additional Unit Tests stage
-#
-# Place this file at: .pipeline/config.yml
-# =============================================================================
-
-general:
-  pipeline: "ci_cd"
-  buildTool: "mta"
-  # Set to false if you do not want to share telemetry data with SAP
-  collectTelemetryData: false
-
-# ── Stage configuration ───────────────────────────────────────────────────────
 stages:
-
-  # ── BUILD ──────────────────────────────────────────────────────────────────
-  # The Build stage compiles the MTA, which includes the CAP Java module.
-  # Maven Surefire runs the JUnit tests automatically during `mvn package`.
-  # mavenExecuteStaticCodeChecks and npmExecuteLint are off to keep it focused.
   build:
     buildTool: "mta"
     buildDescriptor: "mta.yaml"
     buildToolVersion: "MBTJ17N22"
-    mavenExecuteStaticCodeChecks: false
     npmExecuteLint: false
 
-  # ── ADDITIONAL UNIT TESTS ──────────────────────────────────────────────────
-  # Runs the CAP Node Jest tests and the UI5 QUnit tests (headless, Node-based).
-  # Both are triggered via npmExecuteScripts pointing at the respective folders.
-  "additionalTests":
-    npmExecuteScripts: true
-    karmaExecuteTests: false   # not used – QUnit runs via npm test in Node
-
-  # # ── RELEASE ────────────────────────────────────────────────────────────────
-  # # Deploy the MTA archive to Cloud Foundry.
-  # # Fill in your BTP org/space/credentials below.
-  # Release:
-  #   cloudFoundryDeploy: true
-  #   tmsUpload: false
-
-# ── Step configuration ────────────────────────────────────────────────────────
-steps:
-
-  # ── CAP Java JUnit tests ──────────────────────────────────────────────────
-  # Surefire runs automatically when `mvn package` builds the MTA.
-  # The step below publishes the JUnit XML results so the CI/CD UI
-  # shows per-test pass/fail details.
-  testsPublishResults:
-    junit:
-      active: true
-      # Surefire writes to target/surefire-reports/ by default
-      pattern: "**/target/surefire-reports/TEST-*.xml"
-      updateResults: true
-    npm:
-      active: true
-      # Jest writes junit.xml when jest-junit reporter is configured
-      pattern: "**/cap-node/junit.xml"
-      updateResults: true
-
-  # ── CAP Node Jest tests ───────────────────────────────────────────────────
-  # Runs `npm test` in the cap-node module.
-  # Jest is configured in cap-node/package.json.
-  npmExecuteScripts:
-    runScripts:
-      - "test"
-    buildDescriptorList:
-      - "cap-node/package.json"
-      - "ui5-app/package.json"
-
-  # # ── MTA Build ─────────────────────────────────────────────────────────────
-  # mtaBuild:
-  #   buildTarget: "CF"
-  #   # The cds-maven-plugin downloads Node internally so no Node pre-install needed
-  #   dockerImage: "devxci/mbtci-java17-node18"
-
-  # ── Cloud Foundry deployment ──────────────────────────────────────────────
-  #cloudFoundryDeploy:
-    # deployTool: "mtaDeployPlugin"
-    # mtaDeployParameters: "-f --version-rule ALL"
-    # cloudFoundry:
-    #   # !! Replace these values with your BTP subaccount details !!
-    #   apiEndpoint: "https://api.cf.<region>.hana.ondemand.com"
-    #   org: "<your-cf-org>"
-    #   space: "<your-cf-space>"
-    #   # credentialsId refers to a credential stored in the CI/CD service
-    #   credentialsId: "cf-deploy-credentials"
-
-  # artifactPrepareVersion:
-  #   versioningType: "cloud_noTag"
+  additionalTests:
+    npmTests:
+      buildDescriptor: "package.json"
+      npmScript: "test"
