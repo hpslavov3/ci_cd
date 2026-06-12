@@ -3,7 +3,6 @@ stages:
     buildTool: "mta"
     buildDescriptor: "mta.yaml"
     buildToolVersion: "MBTJ17N22"
-    npmExecuteLint: false
 
   additionalTests:
     npmTests:
